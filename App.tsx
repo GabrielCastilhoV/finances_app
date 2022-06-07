@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from 'react-native'
+import { ThemeProvider } from "styled-components";
 
 import {
   useFonts,
@@ -7,6 +7,14 @@ import {
   Poppins_500Medium,
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
+
+import theme from "./src/styles/theme";
+
+import { NavigationContainer } from "@react-navigation/native";
+
+import { Routes } from "./src/routes";
+
+
 
 export default function App() {
   const [isLoaded] = useFonts({
@@ -16,6 +24,13 @@ export default function App() {
   });
 
   return (
-    <Text>Hello World</Text>
+    // isLoaded && (
+      <NavigationContainer>
+
+      <ThemeProvider theme={theme}>
+       <Routes />
+      </ThemeProvider>
+      </NavigationContainer>
+    // )
   );
 }
