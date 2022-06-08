@@ -1,4 +1,6 @@
 import React from "react";
+import { Text } from 'react-native';
+import NumberFormat from "react-number-format";
 
 import * as S from "./styles";
 
@@ -8,11 +10,10 @@ type Category = {
 };
 
 export type TransactionProps = {
-  type: "income" | "outcome";
-  title: string;
+  type: 1 | 2;
+  description: string;
   amount: string;
-  category: Category;
-  date: string;
+  category: 1 | 2 | 3 | 4 | 5;
 };
 
 type TransactionCardProps = {
@@ -20,21 +21,42 @@ type TransactionCardProps = {
 };
 
 export const TransactionCard = ({ data }: TransactionCardProps) => {
+
+  const transactionCategories = {
+    1: 'purchases',
+    2: 'Salary',
+    3: 'Car',
+    4: 'Food',
+    5: 'Studies',
+  }
+
+  const transactionCategoriesIcon = {
+    1: 'shopping-bag',
+    2: 'dollar-sign',
+    3: 'crosshair',
+    4: 'coffee',
+    5: 'book',
+  }
+
   return (
     <S.Wrapper>
-      <S.Title>{data.title}</S.Title>
+      <S.Title>{data.description}</S.Title>
 
       <S.Amount type={data.type}>
-        {data.type === "outcome" && "-"} {data.amount}
+        <NumberFormat 
+          value={data.amount}
+          renderText={value => <Text> {data.type === 2 && "-"} {value}</Text>}
+          displayType={'text'}
+          thousandSeparator={true}
+          prefix={'$ '} />
       </S.Amount>
 
       <S.Footer>
         <S.Category>
-          <S.Icon name={data.category.icon} />
-          <S.CategoryName>{data.category.name}</S.CategoryName>
+          <S.Icon name={transactionCategoriesIcon[data.category]} />
+          <S.CategoryName>{transactionCategories[data.category]}</S.CategoryName>
         </S.Category>
 
-        <S.Date>{data.date}</S.Date>
       </S.Footer>
     </S.Wrapper>
   );

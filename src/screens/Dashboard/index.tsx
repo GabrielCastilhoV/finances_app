@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Image } from 'react-native'
 import { HighlightCard } from "../../components/HighlightCard";
 import {
@@ -7,6 +7,7 @@ import {
 } from "../../components/TransactionCard";
 
 import logoImage from '../../images/logo.png'
+import api from "../../services/api";
 
 import * as S from "./styles";
 
@@ -15,43 +16,15 @@ export type DataListProps = {
 } & TransactionProps;
 
 export const Dashboard = () => {
-  const data: DataListProps[] = [
-    {
-      id: "1",
-      type: "income",
-      title: "Desenvolvimento",
-      amount: "R$ 12.000,00",
-      category: {
-        name: "Vendas",
-        icon: "dollar-sign",
-      },
-      date: "13/04/2020",
-    },
+  const [transactions, setTransactions] = useState<DataListProps[]>([]); 
 
-    {
-      id: "2",
-      type: "outcome",
-      title: "Desenvolvimento",
-      amount: "R$ 5.000,00",
-      category: {
-        name: "Vendas",
-        icon: "coffee",
-      },
-      date: "13/04/2020",
-    },
-
-    {
-      id: "3",
-      type: "income",
-      title: "Desenvolvimento",
-      amount: "R$ 3.000,00",
-      category: {
-        name: "Vendas",
-        icon: "shopping-bag",
-      },
-      date: "13/04/2020",
-    },
-  ];
+  useEffect(() => {
+    const getTransactions = async () => {
+      const response = await api.get("/transactions");
+      setTransactions(response.data);
+    }
+    getTransactions();
+  }, []);
 
   return (
     <S.Wrapper>
@@ -84,7 +57,7 @@ export const Dashboard = () => {
         <S.Title>Transactions</S.Title>
 
         <S.TransactionList
-          data={data}
+          data={transactions}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <TransactionCard data={item} />}
         />

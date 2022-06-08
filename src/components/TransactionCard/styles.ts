@@ -4,7 +4,7 @@ import { RFValue } from "react-native-responsive-fontsize";
 import { Feather } from "@expo/vector-icons";
 
 type TransactionTypeProps = {
-  type: "income" | "outcome";
+  type: 1 | 2;
 };
 
 export const Wrapper = styled.View`
@@ -27,7 +27,7 @@ export const Title = styled.Text`
 export const Amount = styled.Text<TransactionTypeProps>`
   ${({ theme, type }) => css`
     font-family: ${theme.fonts.regular};
-    color: ${type === "income" ? theme.colors.success : theme.colors.attention};
+    color: ${type === 1 ? theme.colors.success : theme.colors.attention};
     font-size: ${RFValue(20)}px;
   `}
 `;
