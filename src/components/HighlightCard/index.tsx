@@ -1,4 +1,6 @@
 import React from "react";
+import NumberFormat from "react-number-format";
+import { Text } from 'react-native'
 
 import * as S from "./styles";
 
@@ -19,6 +21,8 @@ export const HighlightCard = ({
   amount,
   type,
 }: HighlightCardProps) => {
+  // console.log(amount)
+
   return (
     <S.Wrapper type={type}>
       <S.Header>
@@ -27,7 +31,14 @@ export const HighlightCard = ({
       </S.Header>
 
       <S.Footer>
-        <S.Amount type={type}>{amount}</S.Amount>
+        <S.Amount type={type}>
+        <NumberFormat 
+          value={amount}
+          renderText={value => <Text> {value}</Text>}
+          displayType={'text'}
+          thousandSeparator={true}
+          prefix={'$ '} />
+        </S.Amount>
       </S.Footer>
     </S.Wrapper>
   );

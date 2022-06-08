@@ -6,6 +6,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+
 import { useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -18,6 +19,8 @@ import { TransactionButton } from "../../components/Forms/TransactionButton";
 import { CategorySelectButton } from "../../components/Forms/CategorySelectButton";
 
 import * as S from "./styles";
+import api from "../../services/api";
+import { useNavigation } from "@react-navigation/native";
 
 type FormData = {
   name: string;
@@ -32,7 +35,7 @@ const schema = Yup.object().shape({
 });
 
 export const Register = () => {
-  const [transactionType, setTransactionType] = useState("");
+  const [transactionType, setTransactionType] = useState<number>(0);
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
 
   const [category, setCategory] = useState({
@@ -40,13 +43,16 @@ export const Register = () => {
     name: "Categoria",
   });
 
+  const link = useNavigation();
+
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
 
-  function handleTransactionsTypeSelect(type: "income" | "outcome") {
+  function handleTransactionsTypeSelect(type: 1 | 2) {
     setTransactionType(type);
   }
 
@@ -54,7 +60,7 @@ export const Register = () => {
     setCategoryModalVisible(true);
   }
 
-  function handleRegister(form: Partial<FormData>) {
+  async function handleRegister(form: Partial<FormData>) {
     if (!transactionType) {
       return Alert.alert("Select transaction type!");
     }
@@ -63,16 +69,15 @@ export const Register = () => {
       return Alert.alert("Select category!");
     }
 
-    const newTransaction = {
-      id: 1,
-      name: form.name,
+    await api.post("/transactions", {
+      description: form.name,
       amount: form.amount,
       type: transactionType,
       category: category.key,
-      date: new Date(),
-    };
+    })
 
-    console.log(newTransaction);
+    reset();
+    link.navigate("Dashboard");
   }
 
   return (
@@ -87,7 +92,7 @@ export const Register = () => {
             <InputForm
               name="name"
               control={control}
-              placeholder="Name"
+              placeholder="Title"
               autoCapitalize="sentences"
               autoCorrect={false}
               error={errors.name?.message}
@@ -107,14 +112,14 @@ export const Register = () => {
               <TransactionButton
                 type="income"
                 title="Income"
-                onPress={() => handleTransactionsTypeSelect("income")}
-                isActive={transactionType === "income"}
+                onPress={() => handleTransactionsTypeSelect(1)}
+                isActive={transactionType === 1}
               />
               <TransactionButton
                 type="outcome"
                 title="Outcome"
-                onPress={() => handleTransactionsTypeSelect("outcome")}
-                isActive={transactionType === "outcome"}
+                onPress={() => handleTransactionsTypeSelect(2)}
+                isActive={transactionType === 2}
               />
             </S.TransactionsContainer>
 

@@ -45,7 +45,7 @@ export const TransactionCard = ({ data }: TransactionCardProps) => {
       <S.Amount type={data.type}>
         <NumberFormat 
           value={data.amount}
-          renderText={value => <Text> {data.type === 2 && "-"} {value}</Text>}
+          renderText={value => <Text> {value}</Text>}
           displayType={'text'}
           thousandSeparator={true}
           prefix={'$ '} />

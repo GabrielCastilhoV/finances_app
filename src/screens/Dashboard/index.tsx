@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useIsFocused } from '@react-navigation/native';
+
 import { Image } from 'react-native'
 import { HighlightCard } from "../../components/HighlightCard";
 import {
@@ -15,16 +17,40 @@ export type DataListProps = {
   id: string;
 } & TransactionProps;
 
+type Balance = {
+  income?: string
+  outcome?: string
+  total?: string
+}
+
 export const Dashboard = () => {
   const [transactions, setTransactions] = useState<DataListProps[]>([]); 
+  const [balance, setBalance] = useState<Balance>({});
 
+  const isFocused = useIsFocused();
+  
   useEffect(() => {
     const getTransactions = async () => {
       const response = await api.get("/transactions");
       setTransactions(response.data);
     }
     getTransactions();
-  }, []);
+  }, [isFocused]);
+
+  useEffect(() => {
+    const getSummary = transactions?.reduce((acc: any, transaction: any) => {
+        if (transaction?.type === 1) {
+          acc.income += Number(transaction.amount);
+          acc.total += Number(transaction.amount);
+        } else {
+          acc.outcome += Number(transaction.amount);
+          acc.total += Number(transaction.amount);
+        }
+        return acc;
+      }, { income: 0, outcome: 0, total: 0 });
+
+      setBalance(getSummary);
+  }, [transactions, isFocused])
 
   return (
     <S.Wrapper>
@@ -37,19 +63,19 @@ export const Dashboard = () => {
         <HighlightCard
           type="income"
           title="Income"
-          amount="$ 10.000,00"
+          amount={balance ? balance.income! : ""}
         />
 
         <HighlightCard
           type="outcome"
           title="Outcome"
-          amount="$ 2.000,00"
+          amount={balance ? balance.outcome! : ""}
         />
 
         <HighlightCard
           type="total"
           title="Total"
-          amount="$ 8.000,00"
+          amount={balance ? balance.total! : ""}
         />
       </S.HighlightCards>
 
